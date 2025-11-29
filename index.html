@@ -1,341 +1,755 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>LMArena — Hackathon</title>
-  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-  <style>
-    body { font-family: 'Inter', sans-serif; background: radial-gradient(circle at 50% 10%, #f0f4ff 0%, #ffffff 60%, #f5f3ff 100%); min-height:100vh; }
-    .gradient-text { background: linear-gradient(135deg,#2563eb 0%,#9333ea 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
-    .gradient-bg { background: linear-gradient(135deg,#2563eb 0%,#9333ea 100%); }
-    .glass-card{ background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); border:1px solid rgba(255,255,255,0.5); box-shadow: 0 20px 40px -5px rgba(0,0,0,0.05); }
-    .glass-nav{ background: rgba(255,255,255,0.8); backdrop-filter: blur(12px); border-bottom:1px solid rgba(255,255,255,0.3); }
-    .no-scrollbar::-webkit-scrollbar { display:none; } .no-scrollbar{ -ms-overflow-style:none; scrollbar-width:none; }
-    .modal-backdrop { position: fixed; inset:0; background: rgba(0,0,0,0.35); display:flex; align-items:center; justify-content:center; z-index:60; }
-  </style>
-</head>
-<body>
-  <!-- LOGIN VIEW -->
-  <div id="login-view" class="min-h-screen flex items-center justify-center p-4 sm:p-8 transition-opacity duration-500">
-    <div class="w-full max-w-md">
-      <div class="text-center mb-8">
-        <h1 class="text-4xl font-bold tracking-tight mb-2 gradient-text">LMArena</h1>
-        <p class="text-gray-500 text-sm font-medium">Empowering student innovation through micro-funding</p>
-      </div>
-      <div class="glass-card rounded-[24px] p-8 w-full relative overflow-hidden">
-        <div class="flex bg-gray-100 p-1.5 rounded-full mb-8 relative">
-          <div id="tab-bg" class="absolute top-1.5 bottom-1.5 w-[calc(50%-6px)] bg-white rounded-full shadow-sm transition-all duration-300 ease-in-out left-1.5"></div>
-          <button onclick="switchTab('student')" id="student-tab" class="flex-1 relative z-10 text-sm font-semibold py-2.5 text-center rounded-full transition-colors duration-300 text-gray-900">Student Login</button>
-          <button onclick="switchTab('donor')" id="donor-tab" class="flex-1 relative z-10 text-sm font-semibold py-2.5 text-center rounded-full transition-colors duration-300 text-gray-500">Donor Login</button>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>LMArena — Hackathon</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+        background: rgba(255, 255, 255, 0.8);
+        min-height: 100vh;
+      }
+      .gradient-text {
+        background: linear-gradient(135deg, #5b9279 0%, #8fcb9b 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      .gradient-bg {
+        background: linear-gradient(135deg, #5b9279 0%, #8fcb9b 100%);
+      }
+      .glass-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        box-shadow: 0 20px 40px -5px rgba(0, 0, 0, 0.05);
+      }
+      .glass-nav {
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(12px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+      }
+      .no-scrollbar::-webkit-scrollbar {
+        display: none;
+      }
+      .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+      .modal-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.35);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 60;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- LOGIN VIEW -->
+    <div
+      id="login-view"
+      class="min-h-screen flex items-center justify-center p-4 sm:p-8 transition-opacity duration-500"
+    >
+      <div class="w-full max-w-md">
+        <div class="text-center mb-8">
+          <h1 class="text-4xl font-bold tracking-tight mb-2 gradient-text">
+            InnovAid
+          </h1>
+          <p class="text-gray-500 text-sm font-medium">
+            Empowering student innovation through micro-funding
+          </p>
         </div>
-        <form id="login-form" onsubmit="handleLogin(event)" class="space-y-5">
-          <div class="space-y-1.5 input-group">
-            <label for="email" class="text-sm font-medium text-gray-700 block pl-1">Email Address</label>
-            <input type="email" id="email" class="input-field w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50/50 text-gray-900 text-sm transition-all duration-200 custom-focus hover:border-gray-300" placeholder="name@example.com" />
-            <p id="email-error" class="hidden text-xs text-red-500 pl-1">Please enter a valid email address.</p>
-          </div>
-          <div class="space-y-1.5 input-group">
-            <div class="flex justify-between items-center pl-1">
-              <label for="password" class="text-sm font-medium text-gray-700">Password</label>
-              <a href="#" onclick="showForgot()" class="text-xs font-medium text-blue-600 hover:text-blue-700 transition-colors">Forgot Password?</a>
-            </div>
-            <input type="password" id="password" class="input-field w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50/50 text-gray-900 text-sm transition-all duration-200 custom-focus hover:border-gray-300" placeholder="••••••••" />
-            <p id="password-error" class="hidden text-xs text-red-500 pl-1">Password is required.</p>
-          </div>
-          <button type="submit" class="w-full gradient-bg text-white font-semibold py-3.5 rounded-xl shadow-lg shadow-blue-500/20 hover:shadow-blue-500/30 hover:translate-y-[-1px] active:translate-y-[1px] transition-all duration-200 text-sm mt-2">Sign In</button>
-          <div class="relative py-2">
-            <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-gray-100"></div></div>
-            <div class="relative flex justify-center text-xs uppercase"><span class="bg-white px-3 text-gray-400 tracking-wider font-medium">Or continue with</span></div>
-          </div>
-          <button type="button" class="w-full bg-white border border-gray-200 text-gray-700 font-medium py-3 rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 text-sm flex items-center justify-center gap-2">
-            <svg class="w-5 h-5" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
-            Google
-          </button>
-        </form>
-        <div class="mt-8 text-center">
-          <p class="text-sm text-gray-600">Don't have an account? <a href="#" onclick="openSignUp()" class="font-semibold text-blue-600 hover:text-purple-600 transition-colors">Sign Up</a></p>
-        </div>
-      </div>
-      <div class="text-center mt-8 opacity-60">
-        <p class="text-xs font-medium text-gray-400 uppercase tracking-widest">LMArena — Hackathon Edition</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- DASHBOARD VIEW -->
-  <div id="dashboard-view" class="hidden w-full min-h-screen pb-20">
-    <nav class="glass-nav sticky top-0 z-50 w-full px-4 sm:px-8 py-4">
-      <div class="max-w-7xl mx-auto flex items-center justify-between">
-        <div class="flex items-center gap-2">
-          <h1 class="text-2xl font-bold gradient-text tracking-tight">LMArena</h1>
-          <span id="role-badge" class="sm:inline-block px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-gray-100 text-gray-500 rounded-full">Student</span>
-        </div>
-        <div id="desktop-tabs" class="hidden md:flex items-center gap-1 bg-gray-100/50 p-1 rounded-full backdrop-blur-sm"></div>
-        <div class="flex items-center gap-3">
-          <div class="hidden sm:flex flex-col text-right">
-            <span class="text-sm font-semibold text-gray-900" id="profile-name">Alex Design</span>
-            <span class="text-xs text-gray-500">Level 3 Creator</span>
-          </div>
-          <div class="relative group">
-            <button class="w-10 h-10 rounded-full gradient-bg p-[2px] cursor-pointer transition-transform hover:scale-105">
-              <div class="w-full h-full rounded-full bg-white overflow-hidden">
-                <img id="profile-avatar" src="https://api.dicebear.com/7.x/avataaars/svg?seed=Alex" alt="Profile" class="w-full h-full object-cover" />
-              </div>
+        <div
+          class="glass-card rounded-[24px] p-8 w-full relative overflow-hidden"
+        >
+          <div class="flex bg-gray-100 p-1.5 rounded-full mb-8 relative">
+            <div
+              id="tab-bg"
+              class="absolute top-1.5 bottom-1.5 w-[calc(50%-6px)] bg-white rounded-full shadow-sm transition-all duration-300 ease-in-out left-1.5"
+            ></div>
+            <button
+              onclick="switchTab('student')"
+              id="student-tab"
+              class="flex-1 relative z-10 text-sm font-semibold py-2.5 text-center rounded-full transition-colors duration-300 text-gray-900"
+            >
+              Student Login
             </button>
-            <div class="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform origin-top-right">
-              <div class="p-2">
-                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg">Profile Settings</a>
-                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg">Help Center</a>
-                <div class="h-px bg-gray-100 my-1"></div>
-                <button onclick="handleLogout()" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg">Sign Out</button>
+            <button
+              onclick="switchTab('donor')"
+              id="donor-tab"
+              class="flex-1 relative z-10 text-sm font-semibold py-2.5 text-center rounded-full transition-colors duration-300 text-gray-500"
+            >
+              Donor Login
+            </button>
+          </div>
+          <form id="login-form" onsubmit="handleLogin(event)" class="space-y-5">
+            <div class="space-y-1.5 input-group">
+              <label
+                for="email"
+                class="text-sm font-medium text-gray-700 block pl-1"
+                >Email Address</label
+              >
+              <input
+                type="email"
+                id="email"
+                class="input-field w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50/50 text-gray-900 text-sm transition-all duration-200 custom-focus hover:border-gray-300"
+                placeholder="name@example.com"
+              />
+              <p id="email-error" class="hidden text-xs text-red-500 pl-1">
+                Please enter a valid email address.
+              </p>
+            </div>
+            <div class="space-y-1.5 input-group">
+              <div class="flex justify-between items-center pl-1">
+                <label for="password" class="text-sm font-medium text-gray-700"
+                  >Password</label
+                >
+                <a
+                  href="#"
+                  onclick="showForgot()"
+                  class="text-xs font-medium text-blue-600 hover:text-blue-700 transition-colors"
+                  >Forgot Password?</a
+                >
+              </div>
+              <input
+                type="password"
+                id="password"
+                class="input-field w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50/50 text-gray-900 text-sm transition-all duration-200 custom-focus hover:border-gray-300"
+                placeholder="••••••••"
+              />
+              <p id="password-error" class="hidden text-xs text-red-500 pl-1">
+                Password is required.
+              </p>
+            </div>
+            <button
+              type="submit"
+              class="w-full gradient-bg text-white font-semibold py-3.5 rounded-xl shadow-lg shadow-blue-500/20 hover:shadow-blue-500/30 hover:translate-y-[-1px] active:translate-y-[1px] transition-all duration-200 text-sm mt-2"
+            >
+              Sign In
+            </button>
+            <div class="relative py-2">
+              <div class="absolute inset-0 flex items-center">
+                <div class="w-full border-t border-gray-100"></div>
+              </div>
+              <div class="relative flex justify-center text-xs uppercase">
+                <span
+                  class="bg-white px-3 text-gray-400 tracking-wider font-medium"
+                  >Or continue with</span
+                >
+              </div>
+            </div>
+            <button
+              type="button"
+              class="w-full bg-white border border-gray-200 text-gray-700 font-medium py-3 rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 text-sm flex items-center justify-center gap-2"
+            >
+              <svg class="w-5 h-5" viewBox="0 0 24 24">
+                <path
+                  d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                  fill="#4285F4"
+                />
+                <path
+                  d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                  fill="#34A853"
+                />
+                <path
+                  d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+                  fill="#FBBC05"
+                />
+                <path
+                  d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                  fill="#EA4335"
+                />
+              </svg>
+              Google
+            </button>
+          </form>
+          <div class="mt-8 text-center">
+            <p class="text-sm text-gray-600">
+              Don't have an account?
+              <a
+                href="#"
+                onclick="openSignUp()"
+                class="font-semibold text-blue-600 hover:text-purple-600 transition-colors"
+                >Sign Up</a
+              >
+            </p>
+          </div>
+        </div>
+        <div class="text-center mt-8 opacity-60">
+          <p
+            class="text-xs font-medium text-gray-400 uppercase tracking-widest"
+          >
+            InnovAid — Hackathon Edition
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- DASHBOARD VIEW -->
+    <div id="dashboard-view" class="hidden w-full min-h-screen pb-20">
+      <nav class="glass-nav sticky top-0 z-50 w-full px-4 sm:px-8 py-4">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <h1 class="text-2xl font-bold gradient-text tracking-tight">
+              InnovAid
+            </h1>
+            <span
+              id="role-badge"
+              class="sm:inline-block px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-gray-100 text-gray-500 rounded-full"
+              >Student</span
+            >
+          </div>
+          <div
+            id="desktop-tabs"
+            class="hidden md:flex items-center gap-1 bg-gray-100/50 p-1 rounded-full backdrop-blur-sm"
+          ></div>
+          <div class="flex items-center gap-3">
+            <div class="hidden sm:flex flex-col text-right">
+              <span
+                class="text-sm font-semibold text-gray-900"
+                id="profile-name"
+                >Alex Design</span
+              >
+              <span class="text-xs text-gray-500">Level 3 Creator</span>
+            </div>
+            <div class="relative group">
+              <button
+                class="w-10 h-10 rounded-full gradient-bg p-[2px] cursor-pointer transition-transform hover:scale-105"
+              >
+                <div
+                  class="w-full h-full rounded-full bg-white overflow-hidden"
+                >
+                  <img
+                    id="profile-avatar"
+                    src="https://api.dicebear.com/7.x/avataaars/svg?seed=Alex"
+                    alt="Profile"
+                    class="w-full h-full object-cover"
+                  />
+                </div>
+              </button>
+              <div
+                class="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform origin-top-right"
+              >
+                <div class="p-2">
+                  <a
+                    href="#"
+                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg"
+                    >Profile Settings</a
+                  >
+                  <a
+                    href="#"
+                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg"
+                    >Help Center</a
+                  >
+                  <div class="h-px bg-gray-100 my-1"></div>
+                  <button
+                    onclick="handleLogout()"
+                    class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg"
+                  >
+                    Sign Out
+                  </button>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-      <div id="mobile-tabs" class="md:hidden mt-4 overflow-x-auto no-scrollbar flex items-center gap-2 pb-1"></div>
-    </nav>
+        <div
+          id="mobile-tabs"
+          class="md:hidden mt-4 overflow-x-auto no-scrollbar flex items-center gap-2 pb-1"
+        ></div>
+      </nav>
 
-    <main class="max-w-7xl mx-auto px-4 sm:px-8 py-8">
-      <div id="main-content" class="w-full"></div>
-    </main>
+      <main class="max-w-7xl mx-auto px-4 sm:px-8 py-8">
+        <div id="main-content" class="w-full"></div>
+      </main>
 
-    <button id="fab-upload" class="hidden fixed bottom-8 right-8 z-40 group">
-      <div class="absolute inset-0 gradient-bg rounded-full blur opacity-40 group-hover:opacity-70 transition-opacity"></div>
-      <div class="relative bg-gray-900 text-white p-4 rounded-full shadow-xl flex items-center gap-2 hover:scale-105 transition-transform">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-        <span class="pr-2 font-medium">New Project</span>
-      </div>
-    </button>
-  </div>
+      <button id="fab-upload" class="hidden fixed bottom-8 right-8 z-40 group">
+        <div
+          class="absolute inset-0 gradient-bg rounded-full blur opacity-40 group-hover:opacity-70 transition-opacity"
+        ></div>
+        <div
+          class="relative bg-gray-900 text-white p-4 rounded-full shadow-xl flex items-center gap-2 hover:scale-105 transition-transform"
+        >
+          <svg
+            class="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 4v16m8-8H4"
+            ></path>
+          </svg>
+          <span class="pr-2 font-medium">New Project</span>
+        </div>
+      </button>
+    </div>
 
-  <!-- SIGN UP MODAL -->
-  <div id="signup-modal" class="hidden">
-    <div class="modal-backdrop" role="dialog" aria-modal="true">
-      <div class="bg-white rounded-2xl w-full max-w-lg p-6">
-        <h3 class="text-lg font-bold mb-4">Create account</h3>
-        <form id="signup-form" onsubmit="handleSignUp(event)" class="space-y-4">
-          <div>
-            <label class="text-sm font-medium">Full name</label>
-            <input id="su-name" required class="w-full px-3 py-2 rounded-md border border-gray-200" />
-          </div>
-          <div>
-            <label class="text-sm font-medium">Email</label>
-            <input id="su-email" type="email" required class="w-full px-3 py-2 rounded-md border border-gray-200" />
-          </div>
-          <div>
-            <label class="text-sm font-medium">Password</label>
-            <input id="su-password" type="password" required class="w-full px-3 py-2 rounded-md border border-gray-200" />
-          </div>
-          <div>
-            <label class="text-sm font-medium">Role</label>
-            <select id="su-role" class="w-full px-3 py-2 rounded-md border border-gray-200">
-              <option value="student">Student</option>
-              <option value="donor">Donor</option>
-            </select>
-          </div>
-          <div class="flex gap-2 justify-end">
-            <button type="button" onclick="closeSignUp()" class="px-4 py-2 rounded-md bg-gray-100">Cancel</button>
-            <button type="submit" class="px-4 py-2 rounded-md gradient-bg text-white">Create</button>
-          </div>
-        </form>
+    <!-- SIGN UP MODAL -->
+    <div id="signup-modal" class="hidden">
+      <div class="modal-backdrop" role="dialog" aria-modal="true">
+        <div class="bg-white rounded-2xl w-full max-w-lg p-6">
+          <h3 class="text-lg font-bold mb-4">Create account</h3>
+          <form
+            id="signup-form"
+            onsubmit="handleSignUp(event)"
+            class="space-y-4"
+          >
+            <div>
+              <label class="text-sm font-medium">Full name</label>
+              <input
+                id="su-name"
+                required
+                class="w-full px-3 py-2 rounded-md border border-gray-200"
+              />
+            </div>
+            <div>
+              <label class="text-sm font-medium">Email</label>
+              <input
+                id="su-email"
+                type="email"
+                required
+                class="w-full px-3 py-2 rounded-md border border-gray-200"
+              />
+            </div>
+            <div>
+              <label class="text-sm font-medium">Password</label>
+              <input
+                id="su-password"
+                type="password"
+                required
+                class="w-full px-3 py-2 rounded-md border border-gray-200"
+              />
+            </div>
+            <div>
+              <label class="text-sm font-medium">Role</label>
+              <select
+                id="su-role"
+                class="w-full px-3 py-2 rounded-md border border-gray-200"
+              >
+                <option value="student">Student</option>
+                <option value="donor">Donor</option>
+              </select>
+            </div>
+            <div class="flex gap-2 justify-end">
+              <button
+                type="button"
+                onclick="closeSignUp()"
+                class="px-4 py-2 rounded-md bg-gray-100"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                class="px-4 py-2 rounded-md gradient-bg text-white"
+              >
+                Create
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
-  </div>
 
-  <!-- SIMPLE FORGOT MODAL (demo) -->
-  <div id="forgot-modal" class="hidden">
-    <div class="modal-backdrop" role="dialog" aria-modal="true">
-      <div class="bg-white rounded-2xl w-full max-w-md p-6">
-        <h3 class="text-lg font-bold mb-4">Reset Password (demo)</h3>
-        <p class="text-sm text-gray-600 mb-4">This demo does not send emails. Enter a new password to continue.</p>
-        <div class="space-y-3">
-          <input id="forgot-email" placeholder="your email" class="w-full px-3 py-2 rounded-md border border-gray-200" />
-          <div class="flex gap-2 justify-end">
-            <button type="button" onclick="closeForgot()" class="px-4 py-2 rounded-md bg-gray-100">Cancel</button>
-            <button type="button" onclick="doForgot()" class="px-4 py-2 rounded-md gradient-bg text-white">Reset</button>
+    <!-- SIMPLE FORGOT MODAL (demo) -->
+    <div id="forgot-modal" class="hidden">
+      <div class="modal-backdrop" role="dialog" aria-modal="true">
+        <div class="bg-white rounded-2xl w-full max-w-md p-6">
+          <h3 class="text-lg font-bold mb-4">Reset Password (demo)</h3>
+          <p class="text-sm text-gray-600 mb-4">
+            This demo does not send emails. Enter a new password to continue.
+          </p>
+          <div class="space-y-3">
+            <input
+              id="forgot-email"
+              placeholder="your email"
+              class="w-full px-3 py-2 rounded-md border border-gray-200"
+            />
+            <div class="flex gap-2 justify-end">
+              <button
+                type="button"
+                onclick="closeForgot()"
+                class="px-4 py-2 rounded-md bg-gray-100"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onclick="doForgot()"
+                class="px-4 py-2 rounded-md gradient-bg text-white"
+              >
+                Reset
+              </button>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
 
-<script>
-  // ---------- CONFIG ----------
-  const firebaseConfig = {
-    apiKey: "AIzaSyDzVsC3ZYgp4Q8pNFUggDZWQQHEdmRcKpU",
-    authDomain: "project-funding-74ad6.firebaseapp.com",
-    projectId: "project-funding-74ad6",
-    storageBucket: "project-funding-74ad6.firebasestorage.app",
-    messagingSenderId: "316427179272",
-    appId: "1:316427179272:web:417bab2d188caa4d8848bd",
-    measurementId: "G-1PXK2SK56C"
-  };
+    <script>
+      // ---------- CONFIG ----------
+      const firebaseConfig = {
+        apiKey: "AIzaSyDzVsC3ZYgp4Q8pNFUggDZWQQHEdmRcKpU",
+        authDomain: "project-funding-74ad6.firebaseapp.com",
+        projectId: "project-funding-74ad6",
+        storageBucket: "project-funding-74ad6.firebasestorage.app",
+        messagingSenderId: "316427179272",
+        appId: "1:316427179272:web:417bab2d188caa4d8848bd",
+        measurementId: "G-1PXK2SK56C",
+      };
 
-  // >>> REPLACE this with your AI Studio key (NOT Firebase key)
-  const GEMINI_API_KEY = "YOUR_AI_STUDIO_KEY_HERE";
+      // >>> REPLACE this with your AI Studio key (NOT Firebase key)
+      const GEMINI_API_KEY = "AIzaSyBzurxPl1gPAMGD8pPKTm3FL-B_xfkmY2E";
 
-  // ---------- FIREBASE ----------
-  let db = null;
-  try {
-    firebase.initializeApp(firebaseConfig);
-    db = firebase.firestore();
-    console.log("Firebase initialized");
-  } catch (err) {
-    console.warn("Firebase init issue:", err);
-  }
+      // ---------- FIREBASE ----------
+      let db = null;
+      try {
+        firebase.initializeApp(firebaseConfig);
+        db = firebase.firestore();
+        console.log("Firebase initialized");
+      } catch (err) {
+        console.warn("Firebase init issue:", err);
+      }
 
-  // ---------- STATE ----------
-  let currentRole = 'student';
-  let userRole = null;
-  let currentValidationResult = null;
+      // ---------- STATE ----------
+      let currentRole = "student";
+      let userRole = null;
+      let currentValidationResult = null;
 
-  const userStats = {
-    problemsUploaded: 12,
-    approvedProjects: 8,
-    activeness: 9,
-    creditScore: 94,
-    name: "Alex Design",
-    raised: 5200
-  };
+      const userStats = {
+        problemsUploaded: 12,
+        approvedProjects: 8,
+        activeness: 9,
+        creditScore: 94,
+        name: "Alex Design",
+        raised: 5200,
+      };
 
-  // sample projects
-  let projects = [
-    { id:1, title:"EcoDrone: Reforestation AI", creator:"Sarah Jenkins", role:"Computer Science Student", desc:"Autonomous drone swarms capable of planting 10,000 trees a day using biodegradable seed pods.", image:"https://images.unsplash.com/photo-1508614589041-895b8c9d7ef5?auto=format&fit=crop&q=80&w=800", goal:5000, raised:3250, score:94, category:"Sustainability" },
-    { id:2, title:"NeuroLink Assistive Tech", creator:"David Chen", role:"Biomedical Engineering", desc:"Affordable brain-computer interface headset for patients with locked-in syndrome to communicate.", image:"https://images.unsplash.com/photo-1555255707-c07966088b7b?auto=format&fit=crop&q=80&w=800", goal:2500, raised:2100, score:88, category:"HealthTech" },
-    { id:3, title:"SmartCampus Recycle Bin", creator:"Green Team", role:"Environmental Club", desc:"IoT-enabled bins that automatically sort waste using computer vision and reward students with crypto-tokens.", image:"https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?auto=format&fit=crop&q=80&w=800", goal:800, raised:150, score:76, category:"IoT" },
-    { id:4, title:"EduVR History Lessons", creator:"Maya Patel", role:"Education & Tech", desc:"Immersive VR experiences allowing students to witness historical events firsthand.", image:"https://images.unsplash.com/photo-1592478411213-61535fdd861d?auto=format&fit=crop&q=80&w=800", goal:1200, raised:450, score:82, category:"EdTech" },
-    { id:5, title:"Urban Vertical Farm", creator:"Marcus Lee", role:"Agricultural Science", desc:"Compact hydroponic units designed for apartment balconies to grow fresh produce year-round.", image:"https://images.unsplash.com/photo-1530836369250-ef72a3f5cda8?auto=format&fit=crop&q=80&w=800", goal:3500, raised:1200, score:91, category:"Sustainability" },
-    { id:6, title:"SignLingo AI", creator:"Team Vision", role:"Computer Vision Lab", desc:"Real-time sign language translation app using mobile camera to bridge communication gaps.", image:"https://images.unsplash.com/photo-1616628188506-466d445907f5?auto=format&fit=crop&q=80&w=800", goal:4000, raised:3800, score:97, category:"AI & ML" },
-    { id:7, title:"SolarWeave Backpack", creator:"Elena Rodriguez", role:"Product Design", desc:"Ergonomic backpack with integrated flexible solar panels to charge devices on the go.", image:"https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&q=80&w=800", goal:1500, raised:300, score:85, category:"IoT" },
-    { id:8, title:"BioWrap Packaging", creator:"Green Chemists", role:"Chemical Engineering", desc:"Algae-based biodegradable packaging material to replace single-use plastics in cafeterias.", image:"https://images.unsplash.com/photo-1620916297397-a4a5402a3c6c?auto=format&fit=crop&q=80&w=800", goal:6000, raised:1500, score:89, category:"Sustainability" },
-    { id:9, title:"MediDrone Express", creator:"James Foster", role:"Robotics Engineering", desc:"High-speed delivery drones for transporting urgent medical supplies between campus clinics.", image:"https://images.unsplash.com/photo-1579829366248-204fe8413f31?auto=format&fit=crop&q=80&w=800", goal:8500, raised:2100, score:93, category:"HealthTech" }
-  ];
+      // sample projects
+      let projects = [
+        {
+          id: 1,
+          title: "EcoDrone: Reforestation AI",
+          creator: "Sarah Jenkins",
+          role: "Computer Science Student",
+          desc: "Autonomous drone swarms capable of planting 10,000 trees a day using biodegradable seed pods.",
+          image:
+            "https://i0.wp.com/ecording.org/wp-content/uploads/2023/05/forestation-ecodrone.jpeg?fit=2560%2C1707&ssl=1",
+          goal: 5000,
+          raised: 3250,
+          score: 94,
+          category: "Sustainability",
+        },
+        {
+          id: 2,
+          title: "NeuroLink Assistive Tech",
+          creator: "David Chen",
+          role: "Biomedical Engineering",
+          desc: "Affordable brain-computer interface headset for patients with locked-in syndrome to communicate.",
+          image:
+            "https://images.unsplash.com/photo-1555255707-c07966088b7b?auto=format&fit=crop&q=80&w=800",
+          goal: 2500,
+          raised: 2100,
+          score: 88,
+          category: "HealthTech",
+        },
+        {
+          id: 3,
+          title: "SmartCampus Recycle Bin",
+          creator: "Green Team",
+          role: "Environmental Club",
+          desc: "IoT-enabled bins that automatically sort waste using computer vision and reward students with crypto-tokens.",
+          image:
+            "https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?auto=format&fit=crop&q=80&w=800",
+          goal: 800,
+          raised: 150,
+          score: 76,
+          category: "IoT",
+        },
+        {
+          id: 4,
+          title: "EduVR History Lessons",
+          creator: "Maya Patel",
+          role: "Education & Tech",
+          desc: "Immersive VR experiences allowing students to witness historical events firsthand.",
+          image:
+            "https://png.pngtree.com/png-clipart/20240416/original/pngtree-history-learn-educational-lesson-landing-header-vector-png-image_14867001.png",
+          goal: 1200,
+          raised: 450,
+          score: 82,
+          category: "EdTech",
+        },
+        {
+          id: 5,
+          title: "Urban Vertical Farm",
+          creator: "Marcus Lee",
+          role: "Agricultural Science",
+          desc: "Compact hydroponic units designed for apartment balconies to grow fresh produce year-round.",
+          image:
+            "https://images.unsplash.com/photo-1530836369250-ef72a3f5cda8?auto=format&fit=crop&q=80&w=800",
+          goal: 3500,
+          raised: 1200,
+          score: 91,
+          category: "Sustainability",
+        },
+        {
+          id: 6,
+          title: "SignLingo AI",
+          creator: "Team Vision",
+          role: "Computer Vision Lab",
+          desc: "Real-time sign language translation app using mobile camera to bridge communication gaps.",
+          image:
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRpcuo79DicfKz2Fa8NcJ0DRfEUqbcj1cWvZA&s",
+          goal: 4000,
+          raised: 3800,
+          score: 97,
+          category: "AI & ML",
+        },
+        {
+          id: 7,
+          title: "SolarWeave Backpack",
+          creator: "Elena Rodriguez",
+          role: "Product Design",
+          desc: "Ergonomic backpack with integrated flexible solar panels to charge devices on the go.",
+          image:
+            "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&q=80&w=800",
+          goal: 1500,
+          raised: 300,
+          score: 85,
+          category: "IoT",
+        },
+        {
+          id: 8,
+          title: "BioWrap Packaging",
+          creator: "Green Chemists",
+          role: "Chemical Engineering",
+          desc: "Algae-based biodegradable packaging material to replace single-use plastics in cafeterias.",
+          image:
+            "https://images.unsplash.com/photo-1620916297397-a4a5402a3c6c?auto=format&fit=crop&q=80&w=800",
+          goal: 6000,
+          raised: 1500,
+          score: 89,
+          category: "Sustainability",
+        },
+        {
+          id: 9,
+          title: "MediDrone Express",
+          creator: "James Foster",
+          role: "Robotics Engineering",
+          desc: "High-speed delivery drones for transporting urgent medical supplies between campus clinics.",
+          image:
+            "https://images.unsplash.com/photo-1579829366248-204fe8413f31?auto=format&fit=crop&q=80&w=800",
+          goal: 8500,
+          raised: 2100,
+          score: 93,
+          category: "HealthTech",
+        },
+      ];
 
-  // ---------- UI HELPERS ----------
-  function switchTab(role) {
-    currentRole = role;
-    const bg = document.getElementById('tab-bg');
-    const studentTab = document.getElementById('student-tab');
-    const donorTab = document.getElementById('donor-tab');
-    if (role === 'student') {
-      bg.style.left = '6px';
-      studentTab.classList.remove('text-gray-500'); studentTab.classList.add('text-gray-900');
-      donorTab.classList.remove('text-gray-900'); donorTab.classList.add('text-gray-500');
-    } else {
-      bg.style.left = '50%';
-      donorTab.classList.remove('text-gray-500'); donorTab.classList.add('text-gray-900');
-      studentTab.classList.remove('text-gray-900'); studentTab.classList.add('text-gray-500');
-    }
-  }
-
-  function handleLogin(e) {
-    e.preventDefault();
-    const email = document.getElementById('email');
-    const password = document.getElementById('password');
-    const emailError = document.getElementById('email-error');
-    const passwordError = document.getElementById('password-error');
-    let isValid = true;
-    email.classList.remove('border-red-500','bg-red-50');
-    password.classList.remove('border-red-500','bg-red-50');
-    emailError.classList.add('hidden');
-    passwordError.classList.add('hidden');
-    if (!email.value || !email.value.includes('@')) { email.classList.add('border-red-500','bg-red-50'); emailError.classList.remove('hidden'); isValid = false; }
-    if (!password.value) { password.classList.add('border-red-500','bg-red-50'); passwordError.classList.remove('hidden'); isValid = false; }
-    if (isValid) {
-      const btn = e.target.querySelector('button[type="submit"]');
-      const originalText = btn.innerText;
-      btn.innerHTML = '<svg class="animate-spin h-5 w-5 text-white mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>';
-      setTimeout(() => {
-        btn.innerText = originalText;
-        // For demo: Accept any login and set role immediately
-        userRole = currentRole;
-        // If we have a stored user name in localStorage, use it
-        const saved = localStorage.getItem('lmarena_user');
-        if (saved) {
-          try { const obj = JSON.parse(saved); userStats.name = obj.name || userStats.name; document.getElementById('profile-name').innerText = userStats.name; } catch(e) {}
+      // ---------- UI HELPERS ----------
+      function switchTab(role) {
+        currentRole = role;
+        const bg = document.getElementById("tab-bg");
+        const studentTab = document.getElementById("student-tab");
+        const donorTab = document.getElementById("donor-tab");
+        if (role === "student") {
+          bg.style.left = "6px";
+          studentTab.classList.remove("text-gray-500");
+          studentTab.classList.add("text-gray-900");
+          donorTab.classList.remove("text-gray-900");
+          donorTab.classList.add("text-gray-500");
+        } else {
+          bg.style.left = "50%";
+          donorTab.classList.remove("text-gray-500");
+          donorTab.classList.add("text-gray-900");
+          studentTab.classList.remove("text-gray-900");
+          studentTab.classList.add("text-gray-500");
         }
-        initDashboard();
-      }, 700);
-    }
-  }
+      }
 
-  function handleLogout() {
-    document.getElementById('dashboard-view').classList.add('hidden');
-    document.getElementById('login-view').classList.remove('hidden');
-    document.getElementById('login-form').reset();
-    userRole = null;
-  }
+      function handleLogin(e) {
+        e.preventDefault();
+        const email = document.getElementById("email");
+        const password = document.getElementById("password");
+        const emailError = document.getElementById("email-error");
+        const passwordError = document.getElementById("password-error");
+        let isValid = true;
+        email.classList.remove("border-red-500", "bg-red-50");
+        password.classList.remove("border-red-500", "bg-red-50");
+        emailError.classList.add("hidden");
+        passwordError.classList.add("hidden");
+        if (!email.value || !email.value.includes("@")) {
+          email.classList.add("border-red-500", "bg-red-50");
+          emailError.classList.remove("hidden");
+          isValid = false;
+        }
+        if (!password.value) {
+          password.classList.add("border-red-500", "bg-red-50");
+          passwordError.classList.remove("hidden");
+          isValid = false;
+        }
+        if (isValid) {
+          const btn = e.target.querySelector('button[type="submit"]');
+          const originalText = btn.innerText;
+          btn.innerHTML =
+            '<svg class="animate-spin h-5 w-5 text-white mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>';
+          setTimeout(() => {
+            btn.innerText = originalText;
+            // For demo: Accept any login and set role immediately
+            userRole = currentRole;
+            // If we have a stored user name in localStorage, use it
+            const saved = localStorage.getItem("lmarena_user");
+            if (saved) {
+              try {
+                const obj = JSON.parse(saved);
+                userStats.name = obj.name || userStats.name;
+                document.getElementById("profile-name").innerText =
+                  userStats.name;
+              } catch (e) {}
+            }
+            initDashboard();
+          }, 700);
+        }
+      }
 
-  // ---------- NAV & RENDER ----------
-  function renderNavigation() {
-    const tabs = userRole === 'student' ? ['Home Feed','Upload Project','Track Funding','Messages','Profile'] : ['Recommended','Explore','Your Funding','Messages','Profile'];
-    const desktopContainer = document.getElementById('desktop-tabs');
-    const mobileContainer = document.getElementById('mobile-tabs');
-    const generateTabsHTML = (isMobile) => tabs.map(tab => `
+      function handleLogout() {
+        document.getElementById("dashboard-view").classList.add("hidden");
+        document.getElementById("login-view").classList.remove("hidden");
+        document.getElementById("login-form").reset();
+        userRole = null;
+      }
+
+      // ---------- NAV & RENDER ----------
+      function renderNavigation() {
+        const tabs =
+          userRole === "student"
+            ? [
+                "Home Feed",
+                "Upload Project",
+                "Track Funding",
+                "Messages",
+                "Profile",
+              ]
+            : ["Recommended", "Explore", "Your Funding", "Messages", "Profile"];
+        const desktopContainer = document.getElementById("desktop-tabs");
+        const mobileContainer = document.getElementById("mobile-tabs");
+        const generateTabsHTML = (isMobile) =>
+          tabs
+            .map(
+              (tab) => `
       <button onclick="switchDashboardTab('${tab}')" 
-        class="dashboard-tab px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 whitespace-nowrap ${isMobile ? 'border border-gray-200 bg-white' : 'hover:bg-white hover:shadow-sm text-gray-600'}"
+        class="dashboard-tab px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 whitespace-nowrap ${
+          isMobile
+            ? "border border-gray-200 bg-white"
+            : "hover:bg-white hover:shadow-sm text-gray-600"
+        }"
         data-tab="${tab}">
         ${tab}
       </button>
-    `).join('');
-    desktopContainer.innerHTML = generateTabsHTML(false);
-    mobileContainer.innerHTML = generateTabsHTML(true);
-  }
-
-  function switchDashboardTab(tabName) {
-    document.querySelectorAll('.dashboard-tab').forEach(btn => {
-      if (btn.dataset.tab === tabName) {
-        btn.classList.remove('text-gray-600','bg-white','border-gray-200');
-        btn.classList.add('bg-white','text-blue-600','shadow-sm','ring-1','ring-gray-100');
-        if (btn.parentElement.id === 'desktop-tabs') btn.classList.add('font-semibold');
-      } else {
-        btn.classList.add('text-gray-600');
-        btn.classList.remove('bg-white','text-blue-600','shadow-sm','ring-1','ring-gray-100','font-semibold');
-        if (btn.parentElement.id === 'mobile-tabs') btn.classList.add('bg-white','border-gray-200');
+    `
+            )
+            .join("");
+        desktopContainer.innerHTML = generateTabsHTML(false);
+        mobileContainer.innerHTML = generateTabsHTML(true);
       }
-    });
-    renderContent(tabName);
-  }
 
-  function createProjectCard(p) {
-    const percent = Math.min(100, Math.round((p.raised / p.goal) * 100));
-    return `
+      function switchDashboardTab(tabName) {
+        document.querySelectorAll(".dashboard-tab").forEach((btn) => {
+          if (btn.dataset.tab === tabName) {
+            btn.classList.remove(
+              "text-gray-600",
+              "bg-white",
+              "border-gray-200"
+            );
+            btn.classList.add(
+              "bg-white",
+              "text-blue-600",
+              "shadow-sm",
+              "ring-1",
+              "ring-gray-100"
+            );
+            if (btn.parentElement.id === "desktop-tabs")
+              btn.classList.add("font-semibold");
+          } else {
+            btn.classList.add("text-gray-600");
+            btn.classList.remove(
+              "bg-white",
+              "text-blue-600",
+              "shadow-sm",
+              "ring-1",
+              "ring-gray-100",
+              "font-semibold"
+            );
+            if (btn.parentElement.id === "mobile-tabs")
+              btn.classList.add("bg-white", "border-gray-200");
+          }
+        });
+        renderContent(tabName);
+      }
+
+      function createProjectCard(p) {
+        const percent = Math.min(100, Math.round((p.raised / p.goal) * 100));
+        return `
       <div class="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm project-card flex flex-col h-full">
         <div class="relative h-48 overflow-hidden">
-          <img src="${p.image}" class="w-full h-full object-cover transition-transform duration-700 hover:scale-110" alt="${p.title}">
-          <div class="absolute top-3 left-3 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-lg text-xs font-bold text-gray-700 shadow-sm">${p.category}</div>
-          <div class="absolute top-3 right-3 bg-black/60 backdrop-blur-sm px-2 py-1 rounded-lg text-xs font-bold text-white flex items-center gap-1">AI Score: ${p.score}</div>
+          <img src="${
+            p.image
+          }" class="w-full h-full object-cover transition-transform duration-700 hover:scale-110" alt="${
+          p.title
+        }">
+          <div class="absolute top-3 left-3 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-lg text-xs font-bold text-gray-700 shadow-sm">${
+            p.category
+          }</div>
+          <div class="absolute top-3 right-3 bg-black/60 backdrop-blur-sm px-2 py-1 rounded-lg text-xs font-bold text-white flex items-center gap-1">AI Score: ${
+            p.score
+          }</div>
         </div>
         <div class="p-5 flex flex-col flex-1">
-          <h3 class="font-bold text-lg text-gray-900 leading-tight mb-1">${p.title}</h3>
+          <h3 class="font-bold text-lg text-gray-900 leading-tight mb-1">${
+            p.title
+          }</h3>
           <p class="text-xs text-gray-500 font-medium mb-3">by ${p.creator}</p>
           <p class="text-sm text-gray-600 mb-4 line-clamp-2">${p.desc}</p>
           <div class="mt-auto space-y-3">
             <div>
               <div class="flex justify-between text-xs font-bold text-gray-700 mb-1">
-                <span>${p.raised} raised</span><span class="text-gray-400">of ${p.goal}</span>
+                <span>${p.raised} raised</span><span class="text-gray-400">of ${
+          p.goal
+        }</span>
               </div>
               <div class="w-full bg-gray-100 rounded-full h-2 overflow-hidden"><div class="gradient-bg h-full rounded-full" style="width: ${percent}%"></div></div>
             </div>
-            <button class="w-full py-2.5 rounded-xl text-sm font-semibold transition-all ${userRole === 'donor' ? 'gradient-bg text-white shadow-lg' : 'bg-gray-50 text-gray-900 hover:bg-gray-100 border border-gray-200'}">
-              ${userRole === 'donor' ? 'Fund Now' : 'View Details'}
+            <button class="w-full py-2.5 rounded-xl text-sm font-semibold transition-all ${
+              userRole === "donor"
+                ? "gradient-bg text-white shadow-lg"
+                : "bg-gray-50 text-gray-900 hover:bg-gray-100 border border-gray-200"
+            }">
+              ${userRole === "donor" ? "Fund Now" : "View Details"}
             </button>
           </div>
         </div>
       </div>
     `;
-  }
+      }
 
-  function createListCard(p) {
-    const percent = Math.min(100, Math.round((p.raised / p.goal) * 100));
-    return `
+      function createListCard(p) {
+        const percent = Math.min(100, Math.round((p.raised / p.goal) * 100));
+        return `
       <div class="bg-white p-4 rounded-xl border border-gray-100 flex gap-4 items-center shadow-sm hover:shadow-md transition-shadow">
         <img src="${p.image}" class="w-20 h-20 rounded-lg object-cover" alt="${p.title}">
         <div class="flex-1 min-w-0">
@@ -349,23 +763,27 @@
         </div>
       </div>
     `;
-  }
+      }
 
-  function renderContent(tabName) {
-    const container = document.getElementById('main-content');
-    if (tabName === 'Home Feed' || tabName === 'Recommended') {
-      container.innerHTML = `
+      function renderContent(tabName) {
+        const container = document.getElementById("main-content");
+        if (tabName === "Home Feed" || tabName === "Recommended") {
+          container.innerHTML = `
         <div class="mb-6 flex items-center justify-between">
-          <h2 class="text-xl font-bold text-gray-900">${tabName === 'Recommended' ? 'Recommended for You' : 'Recent Activity'}</h2>
+          <h2 class="text-xl font-bold text-gray-900">${
+            tabName === "Recommended"
+              ? "Recommended for You"
+              : "Recent Activity"
+          }</h2>
           <button class="text-sm font-medium text-blue-600 hover:text-blue-700">View All</button>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          ${projects.map(p => createProjectCard(p)).join('')}
+          ${projects.map((p) => createProjectCard(p)).join("")}
         </div>
       `;
-    } else if (tabName === 'Explore') {
-      const reversed = [...projects].reverse();
-      container.innerHTML = `
+        } else if (tabName === "Explore") {
+          const reversed = [...projects].reverse();
+          container.innerHTML = `
         <div class="mb-6">
           <div class="relative">
             <input type="text" placeholder="Search projects, tags, or creators..." class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none transition-all">
@@ -373,11 +791,11 @@
           </div>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          ${reversed.map(p => createProjectCard(p)).join('')}
+          ${reversed.map((p) => createProjectCard(p)).join("")}
         </div>
       `;
-    } else if (tabName === 'Upload Project') {
-      container.innerHTML = `
+        } else if (tabName === "Upload Project") {
+          container.innerHTML = `
         <div class="max-w-2xl mx-auto">
           <div class="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-gray-100">
             <div class="text-center mb-8">
@@ -439,74 +857,100 @@
           </div>
         </div>
       `;
-    } else if (tabName === 'Track Funding' || tabName === 'Your Funding') {
-      const displayProjects = userRole === 'student' ? projects.filter(p => p.creator === userStats.name) : projects.slice(0,5);
-      container.innerHTML = `
-        <h2 class="text-xl font-bold text-gray-900 mb-6">${tabName === 'Track Funding' ? 'Your Active Projects' : 'Portfolio'}</h2>
-        <div class="space-y-4">${displayProjects.length > 0 ? displayProjects.map(p => createListCard(p)).join('') : '<div class="text-gray-500 italic">No projects found. Upload one!</div>'}</div>
+        } else if (tabName === "Track Funding" || tabName === "Your Funding") {
+          const displayProjects =
+            userRole === "student"
+              ? projects.filter((p) => p.creator === userStats.name)
+              : projects.slice(0, 5);
+          container.innerHTML = `
+        <h2 class="text-xl font-bold text-gray-900 mb-6">${
+          tabName === "Track Funding" ? "Your Active Projects" : "Portfolio"
+        }</h2>
+        <div class="space-y-4">${
+          displayProjects.length > 0
+            ? displayProjects.map((p) => createListCard(p)).join("")
+            : '<div class="text-gray-500 italic">No projects found. Upload one!</div>'
+        }</div>
       `;
-    } else if (tabName === 'Messages') {
-      container.innerHTML = `
+        } else if (tabName === "Messages") {
+          container.innerHTML = `
         <div class="max-w-3xl mx-auto bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden min-h-[400px] flex items-center justify-center flex-col p-8">
           <div class="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mb-4">
             <svg class="w-8 h-8 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
           </div>
           <h3 class="text-lg font-bold text-gray-900">No messages yet</h3>
-          <p class="text-gray-500 text-center mt-2">Connect with ${userRole === 'student' ? 'donors' : 'students'} to start a conversation.</p>
+          <p class="text-gray-500 text-center mt-2">Connect with ${
+            userRole === "student" ? "donors" : "students"
+          } to start a conversation.</p>
         </div>
       `;
-    } else if (tabName === 'Profile') {
-      container.innerHTML = `
+        } else if (tabName === "Profile") {
+          container.innerHTML = `
         <div class="max-w-2xl mx-auto bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
           <div class="h-32 gradient-bg"></div>
           <div class="px-8 pb-8">
             <div class="relative flex justify-between items-end -mt-12 mb-6">
-              <div class="w-24 h-24 rounded-full border-4 border-white bg-white overflow-hidden shadow-md"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(userStats.name)}" alt="Profile" class="w-full h-full object-cover" /></div>
+              <div class="w-24 h-24 rounded-full border-4 border-white bg-white overflow-hidden shadow-md"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(
+                userStats.name
+              )}" alt="Profile" class="w-full h-full object-cover" /></div>
               <button class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors">Edit Profile</button>
             </div>
             <div>
-              <h2 class="text-2xl font-bold text-gray-900" id="profile-display-name">${userStats.name}</h2>
+              <h2 class="text-2xl font-bold text-gray-900" id="profile-display-name">${
+                userStats.name
+              }</h2>
               <p class="text-gray-500 font-medium">Computer Science • Year 3</p>
               <div class="mt-6 grid grid-cols-3 gap-4 border-t border-b border-gray-100 py-6">
-                <div class="text-center"><div class="text-2xl font-bold text-gray-900">${userStats.problemsUploaded}</div><div class="text-xs text-gray-500 uppercase tracking-wide">Projects</div></div>
-                <div class="text-center border-l border-gray-100"><div class="text-2xl font-bold text-gray-900 profile-score-display">${userStats.creditScore}</div><div class="text-xs text-gray-500 uppercase tracking-wide">Score</div></div>
-                <div class="text-center border-l border-gray-100"><div class="text-2xl font-bold text-gray-900">${userStats.raised}</div><div class="text-xs text-gray-500 uppercase tracking-wide">Raised</div></div>
+                <div class="text-center"><div class="text-2xl font-bold text-gray-900">${
+                  userStats.problemsUploaded
+                }</div><div class="text-xs text-gray-500 uppercase tracking-wide">Projects</div></div>
+                <div class="text-center border-l border-gray-100"><div class="text-2xl font-bold text-gray-900 profile-score-display">${
+                  userStats.creditScore
+                }</div><div class="text-xs text-gray-500 uppercase tracking-wide">Score</div></div>
+                <div class="text-center border-l border-gray-100"><div class="text-2xl font-bold text-gray-900">${
+                  userStats.raised
+                }</div><div class="text-xs text-gray-500 uppercase tracking-wide">Raised</div></div>
               </div>
               <div class="mt-6"><h3 class="font-bold text-gray-900 mb-3">About</h3><p class="text-gray-600 text-sm leading-relaxed">Passionate about using technology to solve real-world problems. Currently focused on sustainability and AI applications for environmental monitoring.</p></div>
             </div>
           </div>
         </div>
       `;
-    }
-  }
+        }
+      }
 
-  function initDashboard() {
-    document.getElementById('login-view').classList.add('hidden');
-    document.getElementById('dashboard-view').classList.remove('hidden');
-    document.getElementById('role-badge').innerText = (userRole || 'Student');
-    document.getElementById('fab-upload').classList.toggle('hidden', userRole !== 'student');
-    document.getElementById('profile-name').innerText = userStats.name;
-    renderNavigation();
-    const initialTab = userRole === 'student' ? 'Home Feed' : 'Recommended';
-    switchDashboardTab(initialTab);
-  }
+      function initDashboard() {
+        document.getElementById("login-view").classList.add("hidden");
+        document.getElementById("dashboard-view").classList.remove("hidden");
+        document.getElementById("role-badge").innerText = userRole || "Student";
+        document
+          .getElementById("fab-upload")
+          .classList.toggle("hidden", userRole !== "student");
+        document.getElementById("profile-name").innerText = userStats.name;
+        renderNavigation();
+        const initialTab = userRole === "student" ? "Home Feed" : "Recommended";
+        switchDashboardTab(initialTab);
+      }
 
-  // ---------- AI Validation (Gemini 2.5 Pro) ----------
-  // Uses browser fetch to Google Generative Language endpoint. Replace GEMINI_API_KEY to use live.
-  async function validateIdea() {
-    const description = document.getElementById('p-desc')?.value || '';
-    const title = document.getElementById('p-title')?.value || '';
-    const btn = document.getElementById('btn-validate');
-    const resultsArea = document.getElementById('ai-results');
-    if (!description || description.trim().length < 20) {
-      alert("Please provide a detailed description first (at least ~20 characters).");
-      return;
-    }
-    const originalText = btn.innerHTML;
-    btn.disabled = true;
-    btn.innerHTML = '<svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Analyzing...';
+      // ---------- AI Validation (Gemini 2.5 Pro) ----------
+      // Uses browser fetch to Google Generative Language endpoint. Replace GEMINI_API_KEY to use live.
+      async function validateIdea() {
+        const description = document.getElementById("p-desc")?.value || "";
+        const title = document.getElementById("p-title")?.value || "";
+        const btn = document.getElementById("btn-validate");
+        const resultsArea = document.getElementById("ai-results");
+        if (!description || description.trim().length < 20) {
+          alert(
+            "Please provide a detailed description first (at least ~20 characters)."
+          );
+          return;
+        }
+        const originalText = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML =
+          '<svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Analyzing...';
 
-    const promptText = `
+        const promptText = `
 You are an AI evaluator for a student innovation and funding platform.
 TITLE: ${title}
 DESCRIPTION: ${description}
@@ -526,236 +970,332 @@ Return ONLY valid JSON in this exact format:
 }
 `;
 
-    const useMock = () => {
-      console.warn("Using mock fallback for AI validation (demo mode).");
-      const aiScore = 70 + Math.floor(Math.random() * 25);
-      const credit = Math.min(100, userStats.creditScore + Math.floor(Math.random() * 5) + 1);
-      const mock = {
-        ai_validation_score: aiScore,
-        credit_score: credit,
-        reasoning: { ai_score_reason: "Project is clear and feasible based on description.", credit_score_reason: "Active user with previous approvals." },
-        summary: "Promising project for initial funding."
-      };
-      applyValidationResult(mock, true);
-    };
+        const useMock = () => {
+          console.warn("Using mock fallback for AI validation (demo mode).");
+          const aiScore = 70 + Math.floor(Math.random() * 25);
+          const credit = Math.min(
+            100,
+            userStats.creditScore + Math.floor(Math.random() * 5) + 1
+          );
+          const mock = {
+            ai_validation_score: aiScore,
+            credit_score: credit,
+            reasoning: {
+              ai_score_reason:
+                "Project is clear and feasible based on description.",
+              credit_score_reason: "Active user with previous approvals.",
+            },
+            summary: "Promising project for initial funding.",
+          };
+          applyValidationResult(mock, true);
+        };
 
-    const applyValidationResult = (result, simulated = false) => {
-      currentValidationResult = result;
-      if (resultsArea) resultsArea.classList.remove('hidden');
-      document.getElementById('res-ai-score').innerText = result.ai_validation_score ?? "--";
-      document.getElementById('res-credit-score').innerText = result.credit_score ?? "--";
-      document.getElementById('res-reasoning').innerHTML = `
-        ${simulated ? '<div class="text-xs bg-yellow-100 text-yellow-800 p-2 rounded mb-2 font-semibold">⚠ Demo Mode — simulated result</div>' : ''}
-        <strong>AI Analysis:</strong> ${result.reasoning?.ai_score_reason || ''}<br><br>
-        <strong>Credit Update:</strong> ${result.reasoning?.credit_score_reason || ''}
-      `;
-      const launchBtn = document.getElementById('btn-launch');
-      if (launchBtn) {
-        launchBtn.disabled = false;
-        launchBtn.classList.remove('bg-gray-300','text-gray-500','cursor-not-allowed');
-        launchBtn.classList.add('gradient-bg','text-white','shadow-lg','hover:shadow-xl');
-      }
-      btn.innerHTML = '<span>✓ Analysis Complete</span>';
-      btn.classList.remove('bg-blue-600','hover:bg-blue-700');
-      btn.classList.add('bg-green-600','hover:bg-green-700');
-    };
-
-    // If key missing -> mock
-    if (!GEMINI_API_KEY || GEMINI_API_KEY === "YOUR_AI_STUDIO_KEY_HERE") {
-      console.warn("No valid GEMINI_API_KEY found — using mock.");
-      useMock();
-      btn.disabled = false;
-      return;
-    }
-
-    try {
-      const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro:generateContent?key=${encodeURIComponent(GEMINI_API_KEY)}`;
-      const resp = await fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [
-            {
-              role: "user",
-              parts: [{ text: promptText }]
-            }
-          ],
-          generationConfig: { temperature: 0.1, maxOutputTokens: 400 }
-        })
-      });
-
-      const payload = await resp.json();
-      if (!resp.ok) {
-        console.error("Gemini API Error (HTTP):", resp.status, payload);
-        alert(payload?.error?.message ? `AI API error: ${payload.error.message}` : 'AI API returned an error — switching to demo mode.');
-        useMock();
-        btn.disabled = false;
-        return;
-      }
-
-      // Extract textual output robustly
-      let textOutput = "";
-      try {
-        const cand = payload?.candidates?.[0];
-        if (cand && cand.content && Array.isArray(cand.content.parts)) {
-          textOutput = cand.content.parts.map(p => p.text || "").join("\n");
-        } else if (payload?.candidates && payload.candidates.length) {
-          textOutput = payload.candidates.map(c => (c.content?.parts?.map(p => p.text || "").join("\n") || "")).join("\n");
-        } else if (payload?.output) {
-          textOutput = JSON.stringify(payload.output);
-        } else {
-          textOutput = JSON.stringify(payload);
+        const applyValidationResult = (result, simulated = false) => {
+          currentValidationResult = result;
+          if (resultsArea) resultsArea.classList.remove("hidden");
+          document.getElementById("res-ai-score").innerText =
+            result.ai_validation_score ?? "--";
+          document.getElementById("res-credit-score").innerText =
+            result.credit_score ?? "--";
+          document.getElementById("res-reasoning").innerHTML = `
+        ${
+          simulated
+            ? '<div class="text-xs bg-yellow-100 text-yellow-800 p-2 rounded mb-2 font-semibold">⚠ Demo Mode — simulated result</div>'
+            : ""
         }
-      } catch (err) {
-        console.error("Error extracting text from model response:", err, payload);
-        useMock();
-        btn.disabled = false;
-        return;
+        <strong>AI Analysis:</strong> ${
+          result.reasoning?.ai_score_reason || ""
+        }<br><br>
+        <strong>Credit Update:</strong> ${
+          result.reasoning?.credit_score_reason || ""
+        }
+      `;
+          const launchBtn = document.getElementById("btn-launch");
+          if (launchBtn) {
+            launchBtn.disabled = false;
+            launchBtn.classList.remove(
+              "bg-gray-300",
+              "text-gray-500",
+              "cursor-not-allowed"
+            );
+            launchBtn.classList.add(
+              "gradient-bg",
+              "text-white",
+              "shadow-lg",
+              "hover:shadow-xl"
+            );
+          }
+          btn.innerHTML = "<span>✓ Analysis Complete</span>";
+          btn.classList.remove("bg-blue-600", "hover:bg-blue-700");
+          btn.classList.add("bg-green-600", "hover:bg-green-700");
+        };
+
+        // If key missing -> mock
+        if (!GEMINI_API_KEY || GEMINI_API_KEY === "YOUR_AI_STUDIO_KEY_HERE") {
+          console.warn("No valid GEMINI_API_KEY found — using mock.");
+          useMock();
+          btn.disabled = false;
+          return;
+        }
+
+        try {
+          const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro:generateContent?key=${encodeURIComponent(
+            GEMINI_API_KEY
+          )}`;
+          const resp = await fetch(endpoint, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              contents: [
+                {
+                  role: "user",
+                  parts: [{ text: promptText }],
+                },
+              ],
+              generationConfig: { temperature: 0.1, maxOutputTokens: 400 },
+            }),
+          });
+
+          const payload = await resp.json();
+          if (!resp.ok) {
+            console.error("Gemini API Error (HTTP):", resp.status, payload);
+            alert(
+              payload?.error?.message
+                ? `AI API error: ${payload.error.message}`
+                : "AI API returned an error — switching to demo mode."
+            );
+            useMock();
+            btn.disabled = false;
+            return;
+          }
+
+          // Extract textual output robustly
+          let textOutput = "";
+          try {
+            const cand = payload?.candidates?.[0];
+            if (cand && cand.content && Array.isArray(cand.content.parts)) {
+              textOutput = cand.content.parts
+                .map((p) => p.text || "")
+                .join("\n");
+            } else if (payload?.candidates && payload.candidates.length) {
+              textOutput = payload.candidates
+                .map(
+                  (c) =>
+                    c.content?.parts?.map((p) => p.text || "").join("\n") || ""
+                )
+                .join("\n");
+            } else if (payload?.output) {
+              textOutput = JSON.stringify(payload.output);
+            } else {
+              textOutput = JSON.stringify(payload);
+            }
+          } catch (err) {
+            console.error(
+              "Error extracting text from model response:",
+              err,
+              payload
+            );
+            useMock();
+            btn.disabled = false;
+            return;
+          }
+
+          const jsonMatch = textOutput.match(/\{[\s\S]*\}/);
+          if (!jsonMatch) {
+            console.error("No JSON found in model output:", textOutput);
+            console.warn("Model output (for debug):", textOutput);
+            useMock();
+            btn.disabled = false;
+            return;
+          }
+
+          let parsed;
+          try {
+            parsed = JSON.parse(jsonMatch[0]);
+          } catch (err) {
+            console.error(
+              "Failed to parse JSON from model output:",
+              err,
+              jsonMatch[0]
+            );
+            useMock();
+            btn.disabled = false;
+            return;
+          }
+
+          if (
+            typeof parsed.ai_validation_score !== "number" ||
+            typeof parsed.credit_score !== "number"
+          ) {
+            console.warn(
+              "Parsed JSON missing numeric fields, using fallback logic:",
+              parsed
+            );
+            parsed.ai_validation_score =
+              parsed.ai_validation_score ??
+              Math.min(100, Math.round(Math.random() * 30 + 70));
+            parsed.credit_score =
+              parsed.credit_score ??
+              Math.min(
+                100,
+                userStats.creditScore + Math.floor(Math.random() * 4) + 1
+              );
+            parsed.reasoning = parsed.reasoning ?? {
+              ai_score_reason: "Auto-evaluated",
+              credit_score_reason: "Auto-adjust",
+            };
+          }
+
+          applyValidationResult(parsed, false);
+        } catch (err) {
+          console.error("Network or parsing error with Gemini:", err);
+          alert(
+            "Network error while contacting AI — demo fallback will be used."
+          );
+          useMock();
+        } finally {
+          btn.disabled = false;
+        }
       }
 
-      const jsonMatch = textOutput.match(/\{[\s\S]*\}/);
-      if (!jsonMatch) {
-        console.error("No JSON found in model output:", textOutput);
-        console.warn("Model output (for debug):", textOutput);
-        useMock();
-        btn.disabled = false;
-        return;
+      // ---------- UPLOAD ----------
+      async function handleProjectUpload(e) {
+        e.preventDefault();
+        const title = document.getElementById("p-title")?.value || "";
+        const category =
+          document.getElementById("p-category")?.value || "Sustainability";
+        const goal = parseInt(
+          document.getElementById("p-goal")?.value || "0",
+          10
+        );
+        const desc = document.getElementById("p-desc")?.value || "";
+
+        if (!currentValidationResult) {
+          alert("Please validate your project first.");
+          return;
+        }
+        if (!title || !desc || !goal) {
+          alert("Please fill title, description and goal.");
+          return;
+        }
+
+        const newProject = {
+          id: projects.length + 1,
+          title,
+          creator: userStats.name,
+          role: "Computer Science Student",
+          desc,
+          image:
+            "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=800",
+          goal,
+          raised: 0,
+          score: currentValidationResult.ai_validation_score ?? 0,
+          category,
+          createdAt: new Date().toISOString(),
+        };
+
+        projects.unshift(newProject);
+        userStats.problemsUploaded++;
+        userStats.creditScore =
+          currentValidationResult.credit_score ?? userStats.creditScore;
+
+        if (db) {
+          try {
+            await db.collection("projects").add(newProject);
+            console.log("Project saved to Firestore");
+          } catch (err) {
+            console.warn("Firestore save failed (this is okay for demo):", err);
+          }
+        }
+
+        const btn = document.getElementById("btn-launch");
+        const orig = btn.innerHTML;
+        btn.innerHTML = "🚀 Launching...";
+        setTimeout(() => {
+          alert(
+            `Project Launched Successfully!\nYour new Credit Score is ${userStats.creditScore}`
+          );
+          switchDashboardTab("Home Feed");
+          const scoreEl = document.querySelector(".profile-score-display");
+          if (scoreEl) scoreEl.innerText = userStats.creditScore;
+          btn.innerHTML = orig;
+        }, 800);
       }
 
-      let parsed;
-      try {
-        parsed = JSON.parse(jsonMatch[0]);
-      } catch (err) {
-        console.error("Failed to parse JSON from model output:", err, jsonMatch[0]);
-        useMock();
-        btn.disabled = false;
-        return;
+      // ---------- SIGN UP HANDLERS ----------
+      function openSignUp() {
+        document.getElementById("signup-modal").classList.remove("hidden");
+      }
+      function closeSignUp() {
+        document.getElementById("signup-modal").classList.add("hidden");
+      }
+      function showForgot() {
+        document.getElementById("forgot-modal").classList.remove("hidden");
+      }
+      function closeForgot() {
+        document.getElementById("forgot-modal").classList.add("hidden");
+      }
+      function doForgot() {
+        alert("Demo reset: password reset simulated.");
+        closeForgot();
       }
 
-      if (typeof parsed.ai_validation_score !== 'number' || typeof parsed.credit_score !== 'number') {
-        console.warn("Parsed JSON missing numeric fields, using fallback logic:", parsed);
-        parsed.ai_validation_score = parsed.ai_validation_score ?? Math.min(100, Math.round(Math.random() * 30 + 70));
-        parsed.credit_score = parsed.credit_score ?? Math.min(100, userStats.creditScore + Math.floor(Math.random()*4) + 1);
-        parsed.reasoning = parsed.reasoning ?? { ai_score_reason: "Auto-evaluated", credit_score_reason: "Auto-adjust" };
+      async function handleSignUp(e) {
+        e.preventDefault();
+        const name = document.getElementById("su-name").value.trim();
+        const email = document.getElementById("su-email").value.trim();
+        const password = document.getElementById("su-password").value;
+        const role = document.getElementById("su-role").value;
+
+        if (!name || !email || !password) {
+          alert("Please fill all fields.");
+          return;
+        }
+
+        // Save locally (demo) and attempt to save to Firestore 'users'
+        const userObj = {
+          name,
+          email,
+          role,
+          createdAt: new Date().toISOString(),
+        };
+        try {
+          localStorage.setItem("lmarena_user", JSON.stringify(userObj));
+          if (db) {
+            await db.collection("users").add(userObj);
+            console.log("User saved to Firestore");
+          }
+        } catch (err) {
+          console.warn("User save failed:", err);
+        }
+
+        // Set session and go to dashboard
+        userRole = role;
+        userStats.name = name;
+        document.getElementById("profile-name").innerText = name;
+        closeSignUp();
+        initDashboard();
       }
 
-      applyValidationResult(parsed, false);
+      // ---------- BOOT ----------
+      // expose for inline onclicks
+      window.switchTab = switchTab;
+      window.handleLogin = handleLogin;
+      window.handleLogout = handleLogout;
+      window.initDashboard = initDashboard;
+      window.renderNavigation = renderNavigation;
+      window.switchDashboardTab = switchDashboardTab;
+      window.validateIdea = validateIdea;
+      window.handleProjectUpload = handleProjectUpload;
+      window.openSignUp = openSignUp;
+      window.closeSignUp = closeSignUp;
+      window.handleSignUp = handleSignUp;
+      window.showForgot = showForgot;
+      window.closeForgot = closeForgot;
+      window.doForgot = doForgot;
 
-    } catch (err) {
-      console.error("Network or parsing error with Gemini:", err);
-      alert("Network error while contacting AI — demo fallback will be used.");
-      useMock();
-    } finally {
-      btn.disabled = false;
-    }
-  }
-
-  // ---------- UPLOAD ----------
-  async function handleProjectUpload(e) {
-    e.preventDefault();
-    const title = document.getElementById('p-title')?.value || "";
-    const category = document.getElementById('p-category')?.value || "Sustainability";
-    const goal = parseInt(document.getElementById('p-goal')?.value || "0", 10);
-    const desc = document.getElementById('p-desc')?.value || "";
-
-    if (!currentValidationResult) { alert("Please validate your project first."); return; }
-    if (!title || !desc || !goal) { alert("Please fill title, description and goal."); return; }
-
-    const newProject = {
-      id: projects.length + 1,
-      title,
-      creator: userStats.name,
-      role: "Computer Science Student",
-      desc,
-      image: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=800",
-      goal,
-      raised: 0,
-      score: currentValidationResult.ai_validation_score ?? 0,
-      category,
-      createdAt: new Date().toISOString()
-    };
-
-    projects.unshift(newProject);
-    userStats.problemsUploaded++;
-    userStats.creditScore = currentValidationResult.credit_score ?? userStats.creditScore;
-
-    if (db) {
-      try {
-        await db.collection('projects').add(newProject);
-        console.log("Project saved to Firestore");
-      } catch (err) {
-        console.warn("Firestore save failed (this is okay for demo):", err);
-      }
-    }
-
-    const btn = document.getElementById('btn-launch');
-    const orig = btn.innerHTML;
-    btn.innerHTML = '🚀 Launching...';
-    setTimeout(() => {
-      alert(`Project Launched Successfully!\nYour new Credit Score is ${userStats.creditScore}`);
-      switchDashboardTab('Home Feed');
-      const scoreEl = document.querySelector('.profile-score-display');
-      if (scoreEl) scoreEl.innerText = userStats.creditScore;
-      btn.innerHTML = orig;
-    }, 800);
-  }
-
-  // ---------- SIGN UP HANDLERS ----------
-  function openSignUp() { document.getElementById('signup-modal').classList.remove('hidden'); }
-  function closeSignUp() { document.getElementById('signup-modal').classList.add('hidden'); }
-  function showForgot() { document.getElementById('forgot-modal').classList.remove('hidden'); }
-  function closeForgot() { document.getElementById('forgot-modal').classList.add('hidden'); }
-  function doForgot() {
-    alert('Demo reset: password reset simulated.');
-    closeForgot();
-  }
-
-  async function handleSignUp(e) {
-    e.preventDefault();
-    const name = document.getElementById('su-name').value.trim();
-    const email = document.getElementById('su-email').value.trim();
-    const password = document.getElementById('su-password').value;
-    const role = document.getElementById('su-role').value;
-
-    if (!name || !email || !password) { alert('Please fill all fields.'); return; }
-
-    // Save locally (demo) and attempt to save to Firestore 'users'
-    const userObj = { name, email, role, createdAt: new Date().toISOString() };
-    try {
-      localStorage.setItem('lmarena_user', JSON.stringify(userObj));
-      if (db) {
-        await db.collection('users').add(userObj);
-        console.log('User saved to Firestore');
-      }
-    } catch (err) { console.warn('User save failed:', err); }
-
-    // Set session and go to dashboard
-    userRole = role;
-    userStats.name = name;
-    document.getElementById('profile-name').innerText = name;
-    closeSignUp();
-    initDashboard();
-  }
-
-  // ---------- BOOT ----------
-  // expose for inline onclicks
-  window.switchTab = switchTab;
-  window.handleLogin = handleLogin;
-  window.handleLogout = handleLogout;
-  window.initDashboard = initDashboard;
-  window.renderNavigation = renderNavigation;
-  window.switchDashboardTab = switchDashboardTab;
-  window.validateIdea = validateIdea;
-  window.handleProjectUpload = handleProjectUpload;
-  window.openSignUp = openSignUp;
-  window.closeSignUp = closeSignUp;
-  window.handleSignUp = handleSignUp;
-  window.showForgot = showForgot;
-  window.closeForgot = closeForgot;
-  window.doForgot = doForgot;
-
-  // start on login view
-  // (If you want auto-login for demo, set userRole and call initDashboard())
-</script>
-</body>
+      // start on login view
+      // (If you want auto-login for demo, set userRole and call initDashboard())
+    </script>
+  </body>
 </html>
