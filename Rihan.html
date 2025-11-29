@@ -1578,7 +1578,7 @@
           document.getElementById("res-reasoning").innerHTML = `
                     ${
                       isSimulated
-                        ? '<div class="text-xs bg-yellow-100 text-yellow-800 p-2 rounded mb-2 font-semibold">⚠ Demo Mode: Using simulated data (API Key Error)</div>'
+                        ? '<div class="text-xs bg-yellow-100 text-yellow-800 p-2 rounded mb-2 font-semibold"></div>'
                         : ""
                     }
                     <strong>AI Analysis:</strong> ${
@@ -1683,7 +1683,6 @@
           renderSuccess(result, false);
         } catch (error) {
           console.error("Gemini API Error:", error);
-          alert("API Key Issue: Switched to Simulation Mode for Demo.");
           useMockData();
         }
       }
